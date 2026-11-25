@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>陳睿騰 James</title>
+<meta name="description" content="陳睿騰｜有巢氏房屋 民生敦北加盟店。像朋友一樣陪你找家的社區房產顧問。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>
+tailwind.config={theme:{extend:{
+  colors:{oat:'#F9F7F3',paper:'#F2EFE9',ink:'#2A2927',mute:'#6E6A63',sage:'#52665A',clay:'#B57C58',line:'#E2DDD5'},
+  fontFamily:{serif:['"Noto Serif TC"','serif'],sans:['"Noto Sans TC"','system-ui','sans-serif']}
+}}};
+</script>
+<style>
+/* VOICE  editorial, quiet, trustworthy: a neighbourhood advisor, not a sales flyer
+   IDEA   a lifestyle magazine feature on one agent: wide margins, serif headlines, captioned photos
+   PICTURE watercolour portrait (or a watercolour lane of 民生社區 until photos are added) on a paper mount
+   COLOUR oat-milk ground, warm charcoal ink, sage green lead, terracotta accent
+   TYPE   Noto Serif TC for headlines and quotes, Noto Sans TC for body and figures
+   LAYOUT laptop: copy left, mounted picture right; phone: title, picture, buttons, stacked */
+:root{color-scheme:light}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{margin:0;background:#F9F7F3;color:#2A2927;overflow-x:clip}
+*{min-width:0}
+.fade{opacity:0;transform:translateY(18px);transition:opacity .8s ease,transform .8s ease}
+.fade.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.fade{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+.mount{box-shadow:0 1px 0 #E2DDD5,0 18px 40px -24px rgba(42,41,39,.35)}
+.photo-tone{filter:saturate(.82) contrast(.96) sepia(.08)}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #B57C58;outline-offset:3px}
+</style>
+</head>
+<body class="font-sans antialiased">
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.4/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+{
+/* ==========================================================
+   ✏️ 設定區：之後要改資料，只改這一段就好
+   圖片欄位填網址或同資料夾的檔名（例如 "images/portrait.jpg"），
+   留空 "" 時網站會自動顯示水彩風格的替代插畫。
+   ========================================================== */
+const CONFIG = {
+  name: { zh: "陳睿騰", en: "James Chen" },
+  store: { zh: "有巢氏房屋｜民生敦北加盟店", en: "U-Trust Realty · Minsheng–Dunbei" },
+  group: { zh: "永慶房產集團體系", en: "Yungching Group" },
+  phone: "0900-636-348",
+  lineId: "93193193",    // LINE ID；留空就不顯示「複製 LINE ID」
+  lineUrl: "https://line.me/ti/p/~93193193",   // LINE 加好友連結
+  address: { zh: "台北市松山區民生東路五段77號", en: "No. 77, Sec. 5, Minsheng E. Rd., Songshan, Taipei" },
+  agentLicense: "(110)登字第432343號",   // 營業員證號
+  brokerLicense: "",                      // ← 經紀人證號，填了才會顯示
+
+  // 肖像：水彩版與真人版都填了，首屏會出現「手繪溫度／真實日常」切換
+  portrait: {
+    watercolor: "images/portrait-watercolor.jpg",   // 水彩手繪肖像
+    real: "images/portrait-real.jpg",               // 真人街景照
+  },
+};
+
+// 📈 單季業績比較（萬元），用民國年填，最後一筆會用深色顯示
+const QUARTERLY = [
+  { label: "114 Q2", v: 217.3 },
+  { label: "115 Q2", v: 397.1 },
+];
+
+// 「問心無愧，心安理得」旁邊的紀實照片
+const QUOTE_PHOTO = "images/award-stage.jpg";
+
+// 🏆 獎項紀錄（時間軸與信任數據帶都從這裡讀）
+const AWARDS = [
+  {
+    year: "115 Q2",
+    title: { zh: "菁英頒獎典禮・個人業績第 4 名", en: "Elite Awards · No. 4 in individual sales" },
+    note: { zh: "單季業績 397.1 萬", en: "NT$3.971M in a single quarter" },
+    photo: "images/award-115q2-top4.jpg",      // 頒獎照片，會自動套上低飽和暖色濾鏡
+    pos: "center 66%",                         // 照片裁切的對焦位置（左右 上下）
+  },
+  {
+    year: "115 Q1",
+    title: { zh: "北區風雲菁英獎・風雲經紀人員第 18 名", en: "Northern Region Elite Award · No. 18 agent" },
+    note: { zh: "有巢氏房屋加盟總部頒發", en: "Awarded by U-Trust franchise headquarters" },
+    photo: "images/award-115q1-north.jpg",
+    pos: "center 55%",
+  },
+  {
+    year: "114",
+    title: { zh: "年度績優菁英獎", en: "Annual Outstanding Performance Award" },
+    note: { zh: "114 年度業績 689 萬", en: "NT$6.89M in annual sales, 2025" },
+    photo: "images/award-annual-elite.jpg",
+    pos: "center 45%",
+  },
+  {
+    year: "114",
+    title: { zh: "全台菁英會・全台風雲", en: "Nationwide Elite Club · Top Performer" },
+    note: { zh: "個人業績競賽", en: "Individual sales competition" },
+    photo: "images/award-2025-national.jpg",
+    pos: "center 62%",
+  },
+  {
+    year: "114 Q2",
+    title: { zh: "菁英頒獎典禮・個人業績第 8 名", en: "Elite Awards · No. 8 in individual sales" },
+    note: { zh: "單季業績 217.3 萬", en: "NT$2.173M in a single quarter" },
+    photo: "images/award-114q2-top8.jpg",
+    pos: "center 72%",
+  },
+  {
+    year: "114",
+    title: { zh: "北區年度動員季會・風雲菁英獎", en: "Northern Region Mobilization Season · Elite Award" },
+    note: { zh: "北區年度表揚", en: "Annual regional recognition" },
+    photo: "images/award-114-north.jpg",
+    pos: "center 38%",
+  },
+];
+
+// 🏠 精選物件（目前是示範資料，換成你的實際委託即可；photo 建議 4:3）
+const LISTINGS = [
+  {
+    title: { zh: "民生社區樹海三房", en: "Three-bed facing the tree canopy, Minsheng" },
+    tags: { zh: ["樹海第一排", "公園旁"], en: ["Front row to the trees", "By the park"] },
+    size: "34.5", layout: { zh: "3房2廳2衛", en: "3 bed · 2 bath" }, price: "3,980",
+    photo: "", hue: "sage",
+  },
+  {
+    title: { zh: "敦北靜巷採光寓所", en: "Bright flat on a quiet Dunbei lane" },
+    tags: { zh: ["靜巷採光", "近捷運"], en: ["Quiet & bright", "Near MRT"] },
+    size: "28.2", layout: { zh: "2房2廳1衛", en: "2 bed · 1 bath" }, price: "2,680",
+    photo: "", hue: "clay",
+  },
+  {
+    title: { zh: "富錦街邊間公寓", en: "Corner walk-up on Fujin Street" },
+    tags: { zh: ["邊間三面採光", "巷弄咖啡圈"], en: ["Light on three sides", "Café lanes"] },
+    size: "31.6", layout: { zh: "3房1廳1衛", en: "3 bed · 1 bath" }, price: "2,850",
+    photo: "", hue: "oat",
+  },
+];
+
+/* ---------- 文案（中／英） ---------- */
+const T = {
+  zh: {
+    nav: [["about","關於我"],["services","服務理念"],["awards","實績紀錄"],["listings","精選好宅"]],
+    talk: "預約聊聊",
+    eyebrow: "TAIPEI REAL ESTATE ADVISOR",
+    h1: "在城市的巷弄裡，為你找一處心安理得的日常。",
+    sub: "我是陳睿騰，在有巢氏民生敦北店做房仲，每天在松山、民生社區的巷子裡帶看。看房子不用急，我陪你一間一間看，數字攤開講，你想清楚再決定。",
+    btn1: "瀏覽精選物件", btn2: "預約一杯咖啡的時間",
+    capW: "水彩手繪・陳睿騰", capR: "真實日常・和家人出遊", capF: "民生社區・午後的巷弄",
+    tW: "手繪溫度", tR: "真實日常",
+    strip: [
+      ["全台風雲", "114 年永慶房產集團全台菁英會"],
+      ["單季 Top 4", "115 年第二季個人業績 397.1 萬"],
+      ["100% 透明", "實價登錄與屋況完整揭露"],
+    ],
+    quote1: "用心服務及真誠對待，是最動人的銷售術。",
+    aboutH: "先聽你說，再陪你看",
+    about: [
+      "我做房仲的方式很簡單：先聽。你幾點出門上班、小孩在哪讀書、假日喜歡去哪裡，這些比坪數更能決定一間房子適不適合你。",
+      "看屋時，壁癌、漏水痕跡、管委會怎麼運作、採光從哪個方向進來，我會一項一項記下來。好的壞的都跟你說，不挑著講。",
+      "到了談價錢，我幫你守住底線。成交很重要，但不會比你住得安心重要，所以我不會催你點頭。",
+    ],
+    timeline: "獎項紀錄",
+    svcH: "三種陪伴方式",
+    svc: [
+      ["01", "買方尋屋企劃", "不盲目帶看。先把你的生活動線、採光通風需求理清楚，也一起想想以後要轉手時好不好賣。"],
+      ["02", "屋主資產託售", "替你的房子寫一個有溫度的故事，用同社區成交資料抓定價，再配上好看的照片去曝光。"],
+      ["03", "區域行情與法規諮詢", "社區這幾年怎麼成交、買賣要繳哪些稅、土地使用分區代表什麼，我一樣一樣算給你看。"],
+    ],
+    awardsH: "實績紀錄",
+    awardsSub: "獎項是同事和客戶一起給的肯定，我把它當成提醒：繼續把每一件事做好。",
+    chartH: "同一季，隔年再比一次", view: "看照片", tapHint: "點任一項可以看頒獎照片。", close: "關閉", prev: "上一張", next: "下一張",
+    quote2: "問心無愧，心安理得。",
+    quote2note: "這是我在頒獎典禮上分享的成功名言，也是我做這行的底線。",
+    listH: "精選好宅",
+    listSub: "看房子的標籤，我更想寫它住起來的樣子。",
+    sample: "以上為示範物件，非實際委託。坪數、屋齡與使用分區以地政機關登記謄本為準，價格僅供參考。",
+    ping: "坪", wan: "萬",
+    cH: "買賣房子是人生大事，先不談成交，歡迎先聊聊你對家的想像。",
+    call: "直接撥電話", copyLine: "複製 LINE ID", addLine: "加 LINE 好友",
+    copied: "已複製", phoneLabel: "電話", lineLabel: "LINE",
+    formH: "留個言給我",
+    want: ["我想買房", "我想賣房", "行情估價"],
+    fName: "怎麼稱呼你", fContact: "電話或 LINE", fMsg: "想聊的事（區域、預算、時間都可以寫）",
+    send: "整理好留言",
+    done: "留言內容已複製。網站沒辦法自動寄出，請貼到 LINE 傳給我，或直接打 0900-636-348。",
+    doneNoClip: "請把下面這段貼到 LINE 傳給我，或直接打 0900-636-348：",
+    need: "請至少寫下稱呼和聯絡方式",
+    foot: "經紀業：有巢氏房屋 民生敦北加盟店",
+    agent: "營業員證號", broker: "經紀人證號",
+    note: "本網站為個人介紹，內容不代表任何投資或價格保證。",
+  },
+  en: {
+    nav: [["about","About"],["services","Approach"],["awards","Track record"],["listings","Homes"]],
+    talk: "Let's talk",
+    eyebrow: "TAIPEI REAL ESTATE ADVISOR",
+    h1: "Somewhere in the city's quiet lanes, a home you can feel at ease in.",
+    sub: "I'm James Chen, an agent at U-Trust Realty's Minsheng–Dunbei branch, showing homes around Songshan and Minsheng Community every day. No rush: we'll look one by one, with every number on the table, until you're sure.",
+    btn1: "See featured homes", btn2: "Book a coffee chat",
+    capW: "Watercolour · James Chen", capR: "Real life · a day out with family", capF: "Minsheng Community · an afternoon lane",
+    tW: "Hand-painted", tR: "Real life",
+    strip: [
+      ["Nationwide Top Performer", "Yungching Group Nationwide Elite Club, 2025"],
+      ["Top 4 in a quarter", "NT$3.971M individual sales, Q2 2026"],
+      ["100% open", "Full disclosure of sale records and condition"],
+    ],
+    quote1: "Care and sincerity are the most moving way to sell.",
+    aboutH: "I listen first, then we look together",
+    about: [
+      "My way of working is simple: I listen. When you leave for work, where your kids go to school, where you spend weekends: these decide whether a home fits you more than floor area does.",
+      "At viewings I note damp walls, old leak marks, how the building committee runs and where the light comes in. The good and the bad, all of it.",
+      "When it comes to price, I hold your line. Closing a deal matters, but not more than you feeling settled, so I won't push you to sign.",
+    ],
+    timeline: "Awards",
+    svcH: "Three ways I can help",
+    svc: [
+      ["01", "Home search plan", "No aimless viewings. We map your daily routes and light and airflow needs first, and think about how easily it could sell later."],
+      ["02", "Selling your home", "I write your home a story with some warmth, price it from recent sales in the same community, and show it with good photography."],
+      ["03", "Local prices & regulations", "How the neighbourhood has traded, which taxes apply when you buy or sell, what your zoning means. I'll work it through with you."],
+    ],
+    awardsH: "Track record",
+    awardsSub: "These awards come from colleagues and clients. I take them as a reminder to keep doing each job well.",
+    chartH: "Same quarter, one year apart", view: "View photo", tapHint: "Tap any award to see the ceremony photo.", close: "Close", prev: "Previous", next: "Next",
+    quote2: "A clear conscience, a settled mind.",
+    quote2note: "The motto I shared on stage at an awards ceremony, and the line I hold to in this work.",
+    listH: "Featured homes",
+    listSub: "Instead of sales tags, I'd rather describe what living there feels like.",
+    sample: "Sample listings, not live instructions. Floor area, age and zoning follow the official land registry; prices are for reference only.",
+    ping: "ping", wan: "×10k NTD",
+    cH: "Buying or selling a home is a big step. Let's not talk deals yet; tell me what home means to you.",
+    call: "Call me", copyLine: "Copy LINE ID", addLine: "Add on LINE",
+    copied: "Copied", phoneLabel: "Phone", lineLabel: "LINE",
+    formH: "Leave me a note",
+    want: ["I want to buy", "I want to sell", "Price check"],
+    fName: "Your name", fContact: "Phone or LINE", fMsg: "What's on your mind (area, budget, timing)",
+    send: "Prepare my note",
+    done: "Your note is copied. This site can't send it for you: paste it to me on LINE, or call 0900-636-348.",
+    doneNoClip: "Please paste this to me on LINE, or call 0900-636-348:",
+    need: "Please add at least your name and a way to reach you",
+    foot: "Brokerage: U-Trust Realty, Minsheng–Dunbei branch",
+    agent: "Sales agent licence", broker: "Broker licence",
+    note: "This site is a personal introduction and is not an investment or price guarantee.",
+  },
+};
+
+const { useState, useEffect, useRef } = React;
+// 年份一律用民國年填寫；英文版會自動換成西元
+const yr = (y, lang) => lang === "en" ? y.replace(/^(\d{3})/, (m) => String(+m + 1911)) : y;
+
+/* 滾動淡入 */
+function Fade({ children, className = "", delay = 0, as: Tag = "div", ...rest }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (!("IntersectionObserver" in window)) { el.classList.add("in"); return; }
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => { if (e.isIntersecting) { el.classList.add("in"); io.disconnect(); } });
+    }, { threshold: 0.12 });
+    io.observe(el);
+    const t = setTimeout(() => el.classList.add("in"), 2500);
+    return () => { io.disconnect(); clearTimeout(t); };
+  }, []);
+  return <Tag ref={ref} className={"fade " + className} style={{ transitionDelay: delay + "ms" }} {...rest}>{children}</Tag>;
+}
+
+/* 沒有照片時的水彩替代插畫 */
+const HUES = {
+  sage: ["#c9d6cc", "#8fa597", "#52665A"],
+  clay: ["#ecd9c8", "#d2a383", "#B57C58"],
+  oat:  ["#e9e3d7", "#c7bba6", "#8c7f6a"],
+};
+function Wash({ hue = "sage", id, tall }) {
+  const [a, b, c] = HUES[hue];
+  const fid = "w" + id;
+  return (
+    <svg viewBox={tall ? "0 0 300 380" : "0 0 400 300"} preserveAspectRatio="xMidYMid slice" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <defs>
+        <filter id={fid} x="-10%" y="-10%" width="120%" height="120%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed={id * 7 + 3} />
+          <feDisplacementMap in="SourceGraphic" scale="14" />
+        </filter>
+      </defs>
+      <rect width="100%" height="100%" fill="#F2EFE9" />
+      <g filter={`url(#${fid})`} opacity="0.92">
+        <circle cx={tall ? 230 : 330} cy="60" r="34" fill="#efd9b4" />
+        <rect x="20" y={tall ? 170 : 120} width="90" height={tall ? 200 : 170} fill={b} opacity=".55" />
+        <rect x="120" y={tall ? 140 : 95} width="80" height={tall ? 230 : 200} fill={a} />
+        <rect x="210" y={tall ? 180 : 130} width="100" height={tall ? 190 : 170} fill={b} opacity=".4" />
+        {[0,1,2].map(i => <rect key={i} x={136} y={(tall ? 160 : 112) + i*38} width="18" height="16" fill="#F9F7F3" opacity=".8" />)}
+        {[0,1,2].map(i => <rect key={"r"+i} x={166} y={(tall ? 160 : 112) + i*38} width="18" height="16" fill="#F9F7F3" opacity=".8" />)}
+        <ellipse cx={tall ? 70 : 80} cy={tall ? 200 : 150} rx="70" ry="62" fill={c} opacity=".55" />
+        <ellipse cx={tall ? 260 : 360} cy={tall ? 230 : 170} rx="64" ry="56" fill={c} opacity=".45" />
+        <rect x={tall ? 66 : 76} y={tall ? 240 : 190} width="7" height="90" fill="#6E6A63" opacity=".6" />
+        <rect x="0" y={tall ? 330 : 270} width="100%" height="60" fill={b} opacity=".35" />
+      </g>
+    </svg>
+  );
+}
+
+function Photo({ src, alt, hue, id, tall, tone, pos }) {
+  const [bad, setBad] = useState(false);
+  if (!src || bad) return <Wash hue={hue} id={id} tall={tall} />;
+  return <img src={src} alt={alt} onError={() => setBad(true)} style={pos ? { objectPosition: pos } : undefined} loading="lazy" className={"absolute inset-0 w-full h-full object-cover " + (tone ? "photo-tone" : "")} />;
+}
+
+function App() {
+  const [lang, setLang] = useState(() => {
+    try {
+      const q = new URLSearchParams(location.search).get("lang");
+      if (q === "en" || location.hash === "#en") return "en";
+      return localStorage.getItem("lang") === "en" ? "en" : "zh";
+    } catch (e) { return "zh"; }
+  });
+  const t = T[lang];
+  const L = (o) => o[lang];
+  useEffect(() => {
+    document.documentElement.lang = lang === "en" ? "en" : "zh-Hant";
+    document.title = lang === "en" ? "James Chen · Realty" : "陳睿騰 James";
+    try { localStorage.setItem("lang", lang); } catch (e) {}
+  }, [lang]);
+
+  const hasW = !!CONFIG.portrait.watercolor, hasR = !!CONFIG.portrait.real;
+  const [view, setView] = useState("w");
+  const showReal = hasR && (view === "r" || !hasW);
+  const caption = showReal ? t.capR : hasW ? t.capW : t.capF;
+
+  const [box, setBox] = useState(null);
+  useEffect(() => {
+    if (box === null) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setBox(null);
+      if (e.key === "ArrowRight") setBox((b) => (b + 1) % AWARDS.length);
+      if (e.key === "ArrowLeft") setBox((b) => (b + AWARDS.length - 1) % AWARDS.length);
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  }, [box]);
+  const qMax = Math.max(...QUARTERLY.map(q => q.v));
+  const growth = "+" + Math.round((QUARTERLY[QUARTERLY.length - 1].v / QUARTERLY[0].v - 1) * 100) + "%";
+
+  const [flash, setFlash] = useState("");
+  const copy = async (text, key) => {
+    try { await navigator.clipboard.writeText(text); setFlash(key); setTimeout(() => setFlash(""), 1800); return true; }
+    catch (e) { return false; }
+  };
+
+  const [wants, setWants] = useState([]);
+  const [form, setForm] = useState({ name: "", contact: "", msg: "" });
+  const [result, setResult] = useState(null);
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.contact.trim()) { setResult({ type: "err" }); return; }
+    const text = `${t.fName}：${form.name}\n${t.fContact}：${form.contact}\n${wants.map(i => t.want[i]).join("、")}\n${form.msg}`.trim();
+    const ok = await copy(text, "form");
+    setResult({ type: ok ? "ok" : "manual", text });
+  };
+
+  const btn = "inline-flex items-center justify-center min-h-[48px] px-6 rounded-full text-[15px] font-medium transition duration-300";
+  const inp = "w-full min-h-[48px] bg-oat border border-line rounded-xl px-4 py-3 text-base text-ink placeholder:text-mute/70 focus:border-sage transition";
+
+  return (
+    <div>
+      {/* 導覽列 */}
+      <header className="sticky top-0 z-30 bg-oat/85 backdrop-blur border-b border-line">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-3 flex items-center gap-4">
+          <a href="#top" className="mr-auto font-serif leading-tight">
+            <span className="text-lg font-bold tracking-wide">{L(CONFIG.name)}</span>
+            <span className="text-mute text-sm"> ｜ {lang === "zh" ? "民生敦北加盟店" : "Minsheng–Dunbei"}</span>
+          </a>
+          <nav className="hidden md:flex gap-7 text-[15px] text-mute">
+            {t.nav.map(([id, label]) => <a key={id} href={"#" + id} className="hover:text-ink transition">{label}</a>)}
+          </nav>
+          <div className="flex rounded-full border border-line overflow-hidden text-sm">
+            {["zh", "en"].map(l => (
+              <button key={l} onClick={() => setLang(l)} aria-pressed={lang === l}
+                className={"min-h-[40px] min-w-[44px] px-3 transition " + (lang === l ? "bg-ink text-oat" : "text-mute hover:text-ink")}>
+                {l === "zh" ? "中" : "EN"}
+              </button>
+            ))}
+          </div>
+          <a href="#contact" className={btn + " hidden sm:inline-flex !min-h-[40px] !px-5 bg-sage text-oat hover:bg-ink"}>{t.talk}</a>
+        </div>
+        <nav className="md:hidden flex gap-6 overflow-x-auto px-4 pb-2 text-[15px] text-mute">
+          {t.nav.map(([id, label]) => <a key={id} href={"#" + id} className="flex-none py-1">{label}</a>)}
+        </nav>
+      </header>
+
+      {/* 首屏 */}
+      <section id="top" className="max-w-6xl mx-auto px-4 sm:px-8 pt-10 sm:pt-16 pb-14 grid md:grid-cols-[1.15fr_.85fr] gap-10 md:gap-16 items-center">
+        <Fade>
+          <p className="text-[13px] tracking-[.2em] text-sage font-medium mb-5">{t.eyebrow}</p>
+          <h1 className="font-serif font-bold text-[34px] sm:text-[46px] lg:text-[52px] leading-[1.25] tracking-tight" style={{ textWrap: "balance" }}>{t.h1}</h1>
+          <p className="mt-6 text-[17px] leading-8 text-mute max-w-xl">{t.sub}</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a href="#listings" className={btn + " bg-ink text-oat hover:bg-sage hover:-translate-y-0.5"}>{t.btn1}</a>
+            <a href="#contact" className={btn + " border border-ink/25 hover:border-sage hover:text-sage hover:-translate-y-0.5"}>{t.btn2}</a>
+          </div>
+        </Fade>
+        <Fade delay={150} className="w-full max-w-sm mx-auto md:max-w-none">
+          <figure className="bg-white p-3 sm:p-4 pb-4 rotate-[1.2deg] mount rounded-sm">
+            <div className="relative aspect-[4/5] overflow-hidden bg-paper">
+              {showReal
+                ? <Photo src={CONFIG.portrait.real} alt={L(CONFIG.name)} id={1} tall tone />
+                : <Photo src={CONFIG.portrait.watercolor} alt={L(CONFIG.name)} hue="sage" id={1} tall />}
+            </div>
+            <figcaption className="mt-3 flex items-center justify-between gap-3 text-[13px] text-mute font-serif">
+              <span>{caption}</span>
+              {hasW && hasR && (
+                <span className="flex rounded-full bg-paper p-0.5 font-sans">
+                  {[["w", t.tW], ["r", t.tR]].map(([k, lab]) => (
+                    <button key={k} onClick={() => setView(k)} aria-pressed={(k === "r") === showReal}
+                      className={"min-h-[36px] px-3 rounded-full transition " + (((k === "r") === showReal) ? "bg-white text-ink shadow-sm" : "")}>{lab}</button>
+                  ))}
+                </span>
+              )}
+            </figcaption>
+          </figure>
+        </Fade>
+      </section>
+
+      {/* 信任數據帶 */}
+      <section className="border-y border-line bg-paper/60">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-line">
+          {t.strip.map(([big, small], i) => (
+            <Fade key={i} delay={i * 120} className="py-7 sm:px-8 first:sm:pl-0">
+              <div className="font-serif text-[28px] font-bold text-ink">{big}</div>
+              <div className="text-sm text-mute mt-1">{small}</div>
+            </Fade>
+          ))}
+        </div>
+      </section>
+
+      {/* 關於我 */}
+      <section id="about" className="max-w-6xl mx-auto px-4 sm:px-8 py-20 sm:py-28 grid md:grid-cols-12 gap-10 md:gap-14">
+        <Fade className="md:col-span-5">
+          <blockquote className="font-serif text-[26px] sm:text-[32px] leading-[1.5] font-semibold">
+            <span className="block text-clay text-5xl leading-none mb-2" aria-hidden="true">“</span>
+            {t.quote1}
+          </blockquote>
+          <div className="mt-6 h-px w-16 bg-clay" />
+          <p className="mt-4 text-sm text-mute">{L(CONFIG.name)}・{L(CONFIG.store)}</p>
+        </Fade>
+        <Fade className="md:col-span-6 md:col-start-7" delay={120}>
+          <h2 className="font-serif text-[28px] sm:text-[34px] font-bold mb-6">{t.aboutH}</h2>
+          {t.about.map((p, i) => <p key={i} className="text-[17px] leading-8 text-ink/85 mb-5">{p}</p>)}
+        </Fade>
+      </section>
+
+      {/* 服務 */}
+      <section id="services" className="bg-paper py-20 sm:py-28">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8">
+          <Fade><h2 className="font-serif text-[28px] sm:text-[34px] font-bold">{t.svcH}</h2></Fade>
+          <div className="mt-10 grid md:grid-cols-3 gap-5">
+            {t.svc.map(([n, h, p], i) => (
+              <Fade key={n} delay={i * 120} className="bg-oat rounded-2xl p-7 border border-line hover:-translate-y-1 hover:border-sage/40 transition duration-300">
+                <div className="font-serif text-[40px] text-clay leading-none">{n}</div>
+                <h3 className="font-serif text-xl font-bold mt-5 mb-3">{h}</h3>
+                <p className="text-[15px] leading-7 text-mute">{p}</p>
+              </Fade>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 實績 */}
+      <section id="awards" className="max-w-6xl mx-auto px-4 sm:px-8 py-20 sm:py-28">
+        <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-end">
+          <Fade className="md:col-span-6">
+            <h2 className="font-serif text-[28px] sm:text-[34px] font-bold">{t.awardsH}</h2>
+            <p className="mt-4 text-mute leading-7 max-w-md">{t.awardsSub}</p>
+          </Fade>
+          <Fade className="md:col-span-6" delay={120}>
+            <div className="flex items-baseline justify-between gap-3 mb-3">
+              <span className="text-sm text-mute">{t.chartH}</span>
+              <span className="font-serif text-clay font-bold text-lg whitespace-nowrap">{growth}</span>
+            </div>
+            <div className="space-y-3">
+              {QUARTERLY.map((q, i) => (
+                <div key={i} className="grid grid-cols-[4.5em_minmax(0,1fr)_5.5em] items-center gap-3 text-sm">
+                  <span className="text-mute whitespace-nowrap">{yr(q.label, lang)}</span>
+                  <span className="h-3 rounded-full bg-line overflow-hidden">
+                    <span className={"block h-full rounded-full " + (i === QUARTERLY.length - 1 ? "bg-sage" : "bg-sage/40")} style={{ width: (q.v / qMax * 100) + "%" }} />
+                  </span>
+                  <span className="text-right font-medium whitespace-nowrap">{q.v}<span className="text-mute text-xs ml-0.5">{lang === "zh" ? "萬" : "×10k"}</span></span>
+                </div>
+              ))}
+            </div>
+          </Fade>
+        </div>
+
+        <div className="mt-12 grid md:grid-cols-12 gap-6 md:gap-10 items-start">
+          <Fade className="md:col-span-7">
+            <button type="button" onClick={() => setBox(0)} className="group block w-full text-left rounded-2xl overflow-hidden bg-paper border border-line">
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <div className="absolute inset-0 group-hover:scale-[1.02] transition duration-700">
+                  <Photo src={AWARDS[0].photo} alt={L(AWARDS[0].title)} id={20} tone hue="clay" pos={AWARDS[0].pos} />
+                </div>
+              </div>
+              <div className="p-5 sm:p-6 flex items-end justify-between gap-4">
+                <div>
+                  <div className="text-sm text-clay font-medium">{yr(AWARDS[0].year, lang)}</div>
+                  <div className="font-serif text-xl sm:text-2xl font-bold leading-snug mt-1">{L(AWARDS[0].title)}</div>
+                  <div className="text-mute text-sm mt-1">{L(AWARDS[0].note)}</div>
+                </div>
+                <span className="text-sm text-sage whitespace-nowrap">{t.view} →</span>
+              </div>
+            </button>
+          </Fade>
+          <Fade className="md:col-span-5" delay={120}>
+            <ol className="divide-y divide-line border-y border-line">
+              {AWARDS.slice(1).map((a, j) => {
+                const i = j + 1;
+                return (
+                  <li key={i}>
+                    <button type="button" onClick={() => setBox(i)} className="w-full flex items-center gap-4 py-4 text-left group">
+                      <span className="relative flex-none w-16 h-16 rounded-xl overflow-hidden bg-paper">
+                        <Photo src={a.photo} alt="" id={20 + i} tone hue="clay" pos={a.pos} />
+                      </span>
+                      <span className="flex-1">
+                        {a.year && <span className="block text-[13px] text-clay font-medium">{yr(a.year, lang)}</span>}
+                        <span className="block font-serif font-semibold leading-snug group-hover:text-sage transition">{L(a.title)}</span>
+                        <span className="block text-[13px] text-mute">{L(a.note)}</span>
+                      </span>
+                      <span className="text-mute group-hover:text-sage transition" aria-hidden="true">›</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+            <p className="mt-3 text-[13px] text-mute">{t.tapHint}</p>
+          </Fade>
+        </div>
+        <div className="mt-20 grid sm:grid-cols-[minmax(0,260px)_minmax(0,1fr)] gap-8 sm:gap-14 items-center">
+          <Fade className="w-full max-w-[260px] mx-auto sm:mx-0">
+            <figure className="bg-white p-3 pb-3 -rotate-[1.5deg] mount rounded-sm">
+              <div className="relative aspect-[3/4] overflow-hidden rounded-sm">
+                <Photo src={QUOTE_PHOTO} alt={L(CONFIG.name)} id={30} tone hue="clay" pos="center 40%" />
+              </div>
+            </figure>
+          </Fade>
+          <Fade delay={120}>
+            <span className="block text-clay text-5xl leading-none mb-2 font-serif" aria-hidden="true">“</span>
+            <p className="font-serif text-[28px] sm:text-[40px] leading-snug font-semibold text-sage">{t.quote2}</p>
+            <p className="mt-4 text-mute max-w-md leading-7">{t.quote2note}</p>
+          </Fade>
+        </div>
+      </section>
+
+      {/* 精選物件 */}
+      <section id="listings" className="bg-paper py-20 sm:py-28">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8">
+          <Fade>
+            <h2 className="font-serif text-[28px] sm:text-[34px] font-bold">{t.listH}</h2>
+            <p className="mt-3 text-mute">{t.listSub}</p>
+          </Fade>
+          <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {LISTINGS.map((h, i) => (
+              <Fade key={i} delay={i * 120} as="article" className="group bg-oat rounded-2xl overflow-hidden border border-line">
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <div className="absolute inset-0 group-hover:scale-[1.03] transition duration-700">
+                    <Photo src={h.photo} alt={L(h.title)} hue={h.hue} id={40 + i} tone />
+                  </div>
+                </div>
+                <div className="p-6">
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {L(h.tags).map(tag => <span key={tag} className="text-[13px] px-3 py-1 rounded-full bg-sage/10 text-sage">{tag}</span>)}
+                  </div>
+                  <h3 className="font-serif text-xl font-bold">{L(h.title)}</h3>
+                  <dl className="mt-4 grid grid-cols-3 text-sm border-t border-line pt-4">
+                    <div><dt className="text-mute text-[13px]">{lang === "zh" ? "坪數" : "Size"}</dt><dd className="font-medium whitespace-nowrap">{h.size} {t.ping}</dd></div>
+                    <div><dt className="text-mute text-[13px]">{lang === "zh" ? "格局" : "Layout"}</dt><dd className="font-medium">{L(h.layout)}</dd></div>
+                    <div className="text-right"><dt className="text-mute text-[13px]">{lang === "zh" ? "總價" : "Price"}</dt><dd className="font-serif font-bold text-clay text-lg whitespace-nowrap">{h.price}<span className="text-xs font-sans text-mute ml-0.5">{t.wan}</span></dd></div>
+                  </dl>
+                </div>
+              </Fade>
+            ))}
+          </div>
+          <p className="mt-6 text-[13px] text-mute">{t.sample}</p>
+        </div>
+      </section>
+
+      {/* 聯絡 */}
+      <section id="contact" className="max-w-6xl mx-auto px-4 sm:px-8 py-20 sm:py-28 grid md:grid-cols-2 gap-12">
+        <Fade>
+          <h2 className="font-serif text-[26px] sm:text-[32px] leading-[1.5] font-bold">{t.cH}</h2>
+          <div className="mt-8 space-y-3">
+            <a href={"tel:" + CONFIG.phone.replace(/-/g, "")} className="flex items-center justify-between gap-4 p-5 rounded-2xl bg-ink text-oat hover:bg-sage transition">
+              <span><span className="block text-xs opacity-70">{t.phoneLabel}</span><span className="text-xl font-medium whitespace-nowrap">{CONFIG.phone}</span></span>
+              <span className="text-sm">{t.call} →</span>
+            </a>
+            {CONFIG.lineId && (
+              <div className="flex items-center justify-between gap-4 p-5 rounded-2xl border border-line">
+                <span><span className="block text-xs text-mute">{t.lineLabel}</span><span className="text-xl font-medium">{CONFIG.lineId}</span></span>
+                <span className="flex gap-2">
+                  <button onClick={() => copy(CONFIG.lineId, "line")} className={btn + " !min-h-[44px] !px-4 border border-line hover:border-sage"}>{flash === "line" ? t.copied : t.copyLine}</button>
+                  {CONFIG.lineUrl && <a href={CONFIG.lineUrl} target="_blank" rel="noopener" className={btn + " !min-h-[44px] !px-4 bg-sage text-oat"}>{t.addLine}</a>}
+                </span>
+              </div>
+            )}
+            <p className="text-sm text-mute pt-2">{L(CONFIG.address)}</p>
+          </div>
+        </Fade>
+        <Fade delay={120}>
+          <form onSubmit={submit} className="bg-paper rounded-2xl p-6 sm:p-8 border border-line" noValidate>
+            <h3 className="font-serif text-xl font-bold mb-5">{t.formH}</h3>
+            <div className="flex flex-wrap gap-2 mb-5">
+              {t.want.map((w, i) => {
+                const on = wants.includes(i);
+                return (
+                  <label key={i} className={"cursor-pointer select-none min-h-[44px] inline-flex items-center gap-2 px-4 rounded-full border transition " + (on ? "bg-sage text-oat border-sage" : "border-line bg-oat hover:border-sage")}>
+                    <input id={"want-" + i} type="checkbox" className="sr-only" checked={on} onChange={() => setWants(on ? wants.filter(x => x !== i) : [...wants, i])} />
+                    {w}
+                  </label>
+                );
+              })}
+            </div>
+            <div className="space-y-3">
+              <input id="f-name" className={inp} placeholder={t.fName} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+              <input id="f-contact" className={inp} placeholder={t.fContact} value={form.contact} onChange={e => setForm({ ...form, contact: e.target.value })} />
+              <textarea id="f-msg" rows="4" className={inp} placeholder={t.fMsg} value={form.msg} onChange={e => setForm({ ...form, msg: e.target.value })} />
+            </div>
+            <button type="submit" className={btn + " mt-5 w-full bg-ink text-oat hover:bg-sage"}>{t.send}</button>
+            {result && result.type === "err" && <p className="mt-4 text-sm text-clay">{t.need}</p>}
+            {result && result.type === "ok" && <p className="mt-4 text-sm text-sage">{t.done}</p>}
+            {result && result.type === "manual" && (
+              <div className="mt-4 text-sm text-mute">
+                <p>{t.doneNoClip}</p>
+                <pre className="mt-2 whitespace-pre-wrap bg-oat border border-line rounded-xl p-3 text-ink font-sans">{result.text}</pre>
+              </div>
+            )}
+          </form>
+        </Fade>
+      </section>
+
+      <footer className="border-t border-line">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-8 text-[13px] text-mute flex flex-col sm:flex-row sm:flex-wrap gap-x-8 gap-y-2">
+          <span>{t.foot}（{L(CONFIG.group)}）</span>
+          <span>{L(CONFIG.address)}</span>
+          <span>{t.agent} {CONFIG.agentLicense}</span>
+          {CONFIG.brokerLicense && <span>{t.broker} {CONFIG.brokerLicense}</span>}
+          <span className="sm:basis-full">{t.note}</span>
+        </div>
+      </footer>
+
+      {box !== null && (
+        <div className="fixed inset-0 z-50 bg-ink/90 flex flex-col" role="dialog" aria-modal="true" aria-label={L(AWARDS[box].title)} onClick={() => setBox(null)}>
+          <div className="flex justify-end p-3">
+            <button type="button" onClick={() => setBox(null)} className="min-h-[44px] min-w-[44px] rounded-full bg-oat/10 text-oat text-2xl" aria-label={t.close}>×</button>
+          </div>
+          <div className="flex-1 min-h-0 px-3 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+            <img src={AWARDS[box].photo} alt={L(AWARDS[box].title)} className="max-h-full max-w-full object-contain rounded-lg photo-tone" />
+          </div>
+          <div className="p-4 sm:p-6 flex items-center gap-3 text-oat" onClick={(e) => e.stopPropagation()}>
+            <button type="button" onClick={() => setBox((box + AWARDS.length - 1) % AWARDS.length)} className="min-h-[44px] min-w-[44px] rounded-full border border-oat/30" aria-label={t.prev}>‹</button>
+            <div className="flex-1 text-center">
+              <div className="text-sm text-clay">{yr(AWARDS[box].year, lang)}</div>
+              <div className="font-serif text-lg font-semibold">{L(AWARDS[box].title)}</div>
+              <div className="text-sm text-oat/70">{L(AWARDS[box].note)}</div>
+            </div>
+            <button type="button" onClick={() => setBox((box + 1) % AWARDS.length)} className="min-h-[44px] min-w-[44px] rounded-full border border-oat/30" aria-label={t.next}>›</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+}
+</script>
+</body>
+</html>
