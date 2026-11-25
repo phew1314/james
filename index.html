@@ -120,37 +120,21 @@ const AWARDS = [
   },
 ];
 
-// 🏠 精選物件（目前是示範資料，換成你的實際委託即可；photo 建議 4:3）
-const LISTINGS = [
-  {
-    title: { zh: "民生社區樹海三房", en: "Three-bed facing the tree canopy, Minsheng" },
-    tags: { zh: ["樹海第一排", "公園旁"], en: ["Front row to the trees", "By the park"] },
-    size: "34.5", layout: { zh: "3房2廳2衛", en: "3 bed · 2 bath" }, price: "3,980",
-    photo: "", hue: "sage",
-  },
-  {
-    title: { zh: "敦北靜巷採光寓所", en: "Bright flat on a quiet Dunbei lane" },
-    tags: { zh: ["靜巷採光", "近捷運"], en: ["Quiet & bright", "Near MRT"] },
-    size: "28.2", layout: { zh: "2房2廳1衛", en: "2 bed · 1 bath" }, price: "2,680",
-    photo: "", hue: "clay",
-  },
-  {
-    title: { zh: "富錦街邊間公寓", en: "Corner walk-up on Fujin Street" },
-    tags: { zh: ["邊間三面採光", "巷弄咖啡圈"], en: ["Light on three sides", "Café lanes"] },
-    size: "31.6", layout: { zh: "3房1廳1衛", en: "3 bed · 1 bath" }, price: "2,850",
-    photo: "", hue: "oat",
-  },
+// 🏠 委託物件連結：物件照片與資訊放在房屋平台上，網站只放連結
+const LISTING_LINKS = [
+  { name: { zh: "591 房屋交易網", en: "591 Housing" }, desc: { zh: "我在 591 刊登的委託物件", en: "My listings on 591" }, url: "https://www.591.com.tw/broker42831" },
+  { name: { zh: "好時價 HousePrice", en: "HousePrice" }, desc: { zh: "我在好時價的經紀人頁面", en: "My agent page on HousePrice" }, url: "https://realtor.houseprice.tw/agent/buy/0900636348/" },
 ];
 
 /* ---------- 文案（中／英） ---------- */
 const T = {
   zh: {
-    nav: [["about","關於我"],["services","服務理念"],["awards","實績紀錄"],["listings","精選好宅"]],
+    nav: [["about","關於我"],["services","服務理念"],["awards","實績紀錄"],["listings","委託物件"]],
     talk: "預約聊聊",
     eyebrow: "TAIPEI REAL ESTATE ADVISOR",
     h1: "在城市的巷弄裡，為你找一處心安理得的日常。",
     sub: "我是陳睿騰，在有巢氏民生敦北店做房仲，每天在松山、民生社區的巷子裡帶看。看房子不用急，我陪你一間一間看，數字攤開講，你想清楚再決定。",
-    btn1: "瀏覽精選物件", btn2: "預約一杯咖啡的時間",
+    btn1: "看委託物件", btn2: "預約一杯咖啡的時間",
     capW: "水彩手繪・陳睿騰", capR: "真實日常・和家人出遊", capF: "民生社區・午後的巷弄",
     tW: "手繪溫度", tR: "真實日常",
     strip: [
@@ -177,10 +161,9 @@ const T = {
     chartH: "同一季，隔年再比一次", view: "看照片", tapHint: "點任一項可以看頒獎照片。", close: "關閉", prev: "上一張", next: "下一張",
     quote2: "問心無愧，心安理得。",
     quote2note: "這是我在頒獎典禮上分享的成功名言，也是我做這行的底線。",
-    listH: "精選好宅",
-    listSub: "看房子的標籤，我更想寫它住起來的樣子。",
-    sample: "以上為示範物件，非實際委託。坪數、屋齡與使用分區以地政機關登記謄本為準，價格僅供參考。",
-    ping: "坪", wan: "萬",
+    listH: "看我的委託物件",
+    listSub: "物件的照片、格局和最新價格，我都放在房屋平台上，資料比較即時。看到喜歡的，直接打給我或傳 LINE，我帶你去現場看。",
+    go: "前往查看", listNote: "點擊後會另開房屋平台網站。",
     cH: "買賣房子是人生大事，先不談成交，歡迎先聊聊你對家的想像。",
     call: "直接撥電話", copyLine: "複製 LINE ID", addLine: "加 LINE 好友",
     copied: "已複製", phoneLabel: "電話", lineLabel: "LINE",
@@ -196,12 +179,12 @@ const T = {
     note: "本網站為個人介紹，內容不代表任何投資或價格保證。",
   },
   en: {
-    nav: [["about","About"],["services","Approach"],["awards","Track record"],["listings","Homes"]],
+    nav: [["about","About"],["services","Approach"],["awards","Track record"],["listings","Listings"]],
     talk: "Let's talk",
     eyebrow: "TAIPEI REAL ESTATE ADVISOR",
     h1: "Somewhere in the city's quiet lanes, a home you can feel at ease in.",
     sub: "I'm James Chen, an agent at U-Trust Realty's Minsheng–Dunbei branch, showing homes around Songshan and Minsheng Community every day. No rush: we'll look one by one, with every number on the table, until you're sure.",
-    btn1: "See featured homes", btn2: "Book a coffee chat",
+    btn1: "See my listings", btn2: "Book a coffee chat",
     capW: "Watercolour · James Chen", capR: "Real life · a day out with family", capF: "Minsheng Community · an afternoon lane",
     tW: "Hand-painted", tR: "Real life",
     strip: [
@@ -228,10 +211,9 @@ const T = {
     chartH: "Same quarter, one year apart", view: "View photo", tapHint: "Tap any award to see the ceremony photo.", close: "Close", prev: "Previous", next: "Next",
     quote2: "A clear conscience, a settled mind.",
     quote2note: "The motto I shared on stage at an awards ceremony, and the line I hold to in this work.",
-    listH: "Featured homes",
-    listSub: "Instead of sales tags, I'd rather describe what living there feels like.",
-    sample: "Sample listings, not live instructions. Floor area, age and zoning follow the official land registry; prices are for reference only.",
-    ping: "ping", wan: "×10k NTD",
+    listH: "See my current listings",
+    listSub: "Photos, floor plans and up-to-date prices live on the property platforms, where they stay current. If something catches your eye, call or message me on LINE and I'll show you around.",
+    go: "Open", listNote: "Opens the property platform in a new tab.",
     cH: "Buying or selling a home is a big step. Let's not talk deals yet; tell me what home means to you.",
     call: "Call me", copyLine: "Copy LINE ID", addLine: "Add on LINE",
     copied: "Copied", phoneLabel: "Phone", lineLabel: "LINE",
@@ -553,36 +535,27 @@ function App() {
         </div>
       </section>
 
-      {/* 精選物件 */}
+      {/* 委託物件連結 */}
       <section id="listings" className="bg-paper py-20 sm:py-28">
-        <div className="max-w-6xl mx-auto px-4 sm:px-8">
-          <Fade>
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 grid md:grid-cols-12 gap-8 md:gap-12 items-center">
+          <Fade className="md:col-span-5">
             <h2 className="font-serif text-[28px] sm:text-[34px] font-bold">{t.listH}</h2>
-            <p className="mt-3 text-mute">{t.listSub}</p>
+            <p className="mt-4 text-mute leading-7">{t.listSub}</p>
           </Fade>
-          <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {LISTINGS.map((h, i) => (
-              <Fade key={i} delay={i * 120} as="article" className="group bg-oat rounded-2xl overflow-hidden border border-line">
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <div className="absolute inset-0 group-hover:scale-[1.03] transition duration-700">
-                    <Photo src={h.photo} alt={L(h.title)} hue={h.hue} id={40 + i} tone />
-                  </div>
-                </div>
-                <div className="p-6">
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {L(h.tags).map(tag => <span key={tag} className="text-[13px] px-3 py-1 rounded-full bg-sage/10 text-sage">{tag}</span>)}
-                  </div>
-                  <h3 className="font-serif text-xl font-bold">{L(h.title)}</h3>
-                  <dl className="mt-4 grid grid-cols-3 text-sm border-t border-line pt-4">
-                    <div><dt className="text-mute text-[13px]">{lang === "zh" ? "坪數" : "Size"}</dt><dd className="font-medium whitespace-nowrap">{h.size} {t.ping}</dd></div>
-                    <div><dt className="text-mute text-[13px]">{lang === "zh" ? "格局" : "Layout"}</dt><dd className="font-medium">{L(h.layout)}</dd></div>
-                    <div className="text-right"><dt className="text-mute text-[13px]">{lang === "zh" ? "總價" : "Price"}</dt><dd className="font-serif font-bold text-clay text-lg whitespace-nowrap">{h.price}<span className="text-xs font-sans text-mute ml-0.5">{t.wan}</span></dd></div>
-                  </dl>
-                </div>
-              </Fade>
-            ))}
-          </div>
-          <p className="mt-6 text-[13px] text-mute">{t.sample}</p>
+          <Fade className="md:col-span-7" delay={120}>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {LISTING_LINKS.map((l, i) => (
+                <a key={i} href={l.url} target="_blank" rel="noopener" className="group flex flex-col justify-between min-h-[150px] p-6 rounded-2xl bg-oat border border-line hover:border-sage hover:-translate-y-1 transition duration-300">
+                  <span>
+                    <span className="block font-serif text-xl font-bold">{L(l.name)}</span>
+                    <span className="block mt-2 text-[15px] text-mute">{L(l.desc)}</span>
+                  </span>
+                  <span className="mt-6 text-sm text-sage font-medium">{t.go} ↗</span>
+                </a>
+              ))}
+            </div>
+            <p className="mt-4 text-[13px] text-mute">{t.listNote}</p>
+          </Fade>
         </div>
       </section>
 
